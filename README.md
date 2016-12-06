@@ -5,7 +5,7 @@ containerhub
 
 Your linux container is just one click away!
 
-Build your own little cloud based on linux containers using [Django][django], [Celery][celery] and [LXD][lxd].
+Build your own little cloud, based on linux containers using [Django][django], [Celery][celery] and [LXD][lxd].
 
 
 FAQ
