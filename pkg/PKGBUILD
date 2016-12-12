@@ -1,0 +1,40 @@
+# Maintainer: Ricardo (XenGi) Band <email@ricardo.band>
+pkgname=containerhub
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Build your own little cloud, based on linux containers using Django, Celery and LXD."
+arch=(any)
+url="https://github.com/XenGi/containerhub"
+license=('MIT')
+depends=('python>=3.5'
+         'pyhton-django>=1.10.3'
+         'python-celery>=4.0.0'
+         'python-docopt>=0.6.2')
+#checkdepends=()
+#optdepends=()
+#backup=()
+install=containerhub.install
+changelog=CHANGELOG.md
+source=("containerhub::git+https://github.com/xengi/containerhub/archive/v$pkgver.tar.gz")
+md5sums=()
+
+prepare() {
+    cd "$pkgname-$pkgver"
+    #patch -p1 -i "$srcdir/$pkgname-$pkgver.patch"
+}
+
+build() {
+	cd "$pkgname-$pkgver"
+	#./configure --prefix=/usr
+	#make
+}
+
+check() {
+	cd "$pkgname-$pkgver"
+	#make -k check
+}
+
+package() {
+	cd "$pkgname-$pkgver"
+	#make DESTDIR="$pkgdir/" install
+}

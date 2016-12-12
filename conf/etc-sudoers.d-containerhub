@@ -1,0 +1,6 @@
+hub ALL=(ALL) NOPASSWD: /usr/bin/netctl enable
+hub ALL=(ALL) NOPASSWD: /usr/bin/netctl disable
+hub ALL=(ALL) NOPASSWD: /usr/bin/netctl start
+hub ALL=(ALL) NOPASSWD: /usr/bin/netctl stop
+hub ALL=(ALL) NOPASSWD: /homedir/bin/netctl_helper.py add
+hub ALL=(ALL) NOPASSWD: /homedir/bin/netctl_helper.py del
