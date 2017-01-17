@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <img src="{% static 'images/avatar.png' %}" alt="" />
+    <ul>
+        <li>Username: {{ user.username }}</li>
+        <li>Name: {{ user.firstname }} {{ user.lastname }}</li>
+        <li>Email: {{ user.email }}</li>
+    </ul>
+</div><!--/.container -->
+{% endblock %}
