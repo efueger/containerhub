@@ -1,0 +1,8 @@
+celery
+Django
+docopt
+mixer
+pytest
+pytest-cov
+pytest-django
+sshpubkeys
