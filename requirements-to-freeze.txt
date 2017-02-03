@@ -5,4 +5,5 @@ mixer
 pytest
 pytest-cov
 pytest-django
+pdbpp
 sshpubkeys
