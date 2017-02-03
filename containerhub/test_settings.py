@@ -11,3 +11,5 @@ DATABASES = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+
+HOST_IP = '127.0.0.1'

@@ -1,8 +1,7 @@
-# coding: utf-8
-
 import uuid
 
 import pytest
+from django.conf import settings
 from mixer.backend.django import mixer
 
 pytestmark = pytest.mark.django_db
@@ -24,6 +23,7 @@ class TestProfile:
 class TestSSHKey:
     def test_model(self):
         obj = mixer.blend('hub.SSHKey')
+
         assert obj.pk == 1, 'Should create a SSHKey instance'
 
 
@@ -32,6 +32,25 @@ class TestContainer:
         obj = mixer.blend('hub.Container', uuid=uuid.uuid4())
 
         assert obj.pk == 1, 'Should create a Container instance'
+
+        config = f'Host {obj.name}\n' \
+                 f'    HostName {settings.HOST_IP}\n' \
+                 '    #Port\n' \
+                 '    User root\n' \
+                 '    IdentitiesOnly yes\n' \
+                 '    IdentityFile ~/.ssh/id_rsa'
+
+        assert obj.sshconfig() == config
+
+        port = mixer.blend('hub.Port', comment='SSH', container=obj)
+        config = f'Host {obj.name}\n' \
+                 f'    HostName {settings.HOST_IP}\n' \
+                 f"    Port {port.port}\n" \
+                 '    User root\n' \
+                 '    IdentitiesOnly yes\n' \
+                 '    IdentityFile ~/.ssh/id_rsa'
+
+        assert obj.sshconfig() == config
 
 
 class TestPort:

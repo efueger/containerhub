@@ -1,7 +1,3 @@
-# coding: utf-8
-
-import uuid
-
 from django.db import models
 from django.conf import settings
 from django.dispatch import receiver
@@ -59,12 +55,12 @@ class Container(models.Model):
         """
         Generates ssh config to connect to this container
         """
-        config = 'Host {host}\n' \
-                 '    HostName {{ ip }}\n'.format(host=self.name, ip=settings.HOST_IP)
-        ports = [p for p in self.ports if p.comment == 'SSH']
-        if len(ports) > 0:
+        config = f'Host {self.name}\n' \
+                 f'    HostName {settings.HOST_IP}\n'
+        port = self.ports.filter(comment='SSH').first()
+        if port:
             # TODO: find SSH port
-            config += '    Port %d\n' % ports[0]
+            config += f'    Port {port.port}\n'
         else:
             config += '    #Port\n'
         config += '    User root\n' \

@@ -201,3 +201,15 @@ def get_port(container: Container, protocol: str, comment: str) -> int:
         port.save()
 
     return port.port
+
+
+@shared_task()
+def update_firewall():
+    """
+    Write current config to iptables file and reload iptables.
+    Removed or added ports work after this job ran.
+
+    :return:
+    """
+    # TODO: write this function
+    pass
