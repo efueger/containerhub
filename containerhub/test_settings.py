@@ -2,6 +2,7 @@
 
 from .settings import *
 
+SECRET_KEY = 'test_naew6iequ5Thuzooche1uquooghoobaesoaNgeiyunoe6Iquuwahng3bie1'
 
 DATABASES = {
     'default': {

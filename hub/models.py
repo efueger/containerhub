@@ -1,3 +1,4 @@
+import sshpubkeys
 from django.db import models
 from django.conf import settings
 from django.dispatch import receiver
@@ -37,7 +38,9 @@ class SSHKey(models.Model):
     public_key = models.CharField(max_length=4096)
 
     def __str__(self):
-        return '%s... (%s)' % (self.public_key[:32], self.comment)
+        s = sshpubkeys.SSHKey(keydata=self.public_key)
+        return s.hash_sha512()
+        #return '%s... (%s)' % (self.public_key[:32], self.comment)
 
 
 class Container(models.Model):
@@ -49,7 +52,7 @@ class Container(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return '%s (%s)' % (self.name, self.template)
+        return f'{self.name} ({self.template})'
 
     def sshconfig(self):
         """
@@ -74,7 +77,7 @@ class Container(models.Model):
 
 class Port(models.Model):
     comment = models.CharField(max_length=255, blank=True, null=True)
-    port = models.PositiveIntegerField(validators=[MinValueValidator(10000), MaxValueValidator(65535)])
+    port = models.PositiveIntegerField(validators=[MinValueValidator(10000, 'Minimum port number is 10000'), MaxValueValidator(65535, 'Maximum port number is 65535')])
     protocol = models.PositiveSmallIntegerField(choices=PROTOCOL_CHOICES, default=1)  # default: TCP
     # TODO: on_delete is probably not correct
     container = models.ForeignKey(Container, on_delete=models.CASCADE, related_name='ports', null=True)
