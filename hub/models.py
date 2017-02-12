@@ -26,7 +26,7 @@ class Profile(models.Model):
         instance.profile.save()
 
     def __str__(self):
-        return '%s <%s>' % (self.user.username, self.user.email)
+        return f'{self.user.username} <{self.user.email}>'
 
     class Meta:
         ordering = ('user', )
@@ -40,7 +40,7 @@ class SSHKey(models.Model):
     def __str__(self):
         s = sshpubkeys.SSHKey(keydata=self.public_key)
         return s.hash_sha512()
-        #return '%s... (%s)' % (self.public_key[:32], self.comment)
+        #return f'{self.public_key[:32]}... ({self.comment})'
 
 
 class Container(models.Model):
@@ -83,7 +83,7 @@ class Port(models.Model):
     container = models.ForeignKey(Container, on_delete=models.CASCADE, related_name='ports', null=True)
 
     def __str__(self):
-        return '%d (%s)' % (self.port, self.get_protocol_display())
+        return f'{self.port} ({self.get_protocol_display()})'
 
     class Meta:
         ordering = ('container', 'port')
@@ -97,7 +97,7 @@ class Network(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
-        return '%s/%s -> %s' % (self.network, self.subnet, self.gateway)
+        return f'{self.network}/{self.subnet} -> {self.gateway}'
 
 
 class IPAddress(models.Model):
@@ -107,9 +107,10 @@ class IPAddress(models.Model):
 
     def __str__(self):
         if self.container:
-            return '%s/%s (%s)' % (self.ip, self.network.subnet, self.container.name)
+            return f'{self.ip}/{self.network.subnet} ({self.container.name})'
         else:
-            return '%s/%s' % (self.ip, self.network.subnet)
+            return f'{self.ip}/{self.network.subnet}'
+
 
 class Domain(models.Model):
     name = models.CharField(max_length=255)
@@ -117,4 +118,4 @@ class Domain(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
-        return '%s -> %s' % (self.name, self.ip.ip)
+        return f'{self.name} -> {self.ip.ip}'

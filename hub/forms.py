@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from .choices import PROTOCOL_CHOICES
 
 

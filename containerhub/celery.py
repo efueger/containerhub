@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import os
 
 from celery import Celery
@@ -22,4 +20,5 @@ app.autodiscover_tasks()
 
 @app.task(bind=True)
 def debug_task(self):
+    # TODO: what does this do?!
     print('Request: {0!r}'.format(self.request))

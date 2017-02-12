@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
+#!/usr/bin/env python3
 
 """
 netctl_helper: Adds or deletes netctl config files.
@@ -55,7 +54,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     if args['add']:
-        network_profile_path = os.path.join('/etc/netctl', 'hubnet_%s' % str(network_uuid))
+        network_profile_path = os.path.join('/etc/netctl', f'hubnet_{str(network_uuid)}')
         buf = sys.stdin.read()
         try:
             with open(network_profile_path, 'w') as f:
@@ -65,10 +64,10 @@ if __name__ == '__main__':
                 print('You need root permissions to do this!', file=sys.stderr)
                 sys.exit(1)
             else:
-                print('Unexpected error %s' % e)
+                print(f'Unexpected error: {e}')
 
     elif args['del']:
-        network_profile_path = os.path.join('/etc/netctl', 'hubnet_%s' % str(network_uuid))
+        network_profile_path = os.path.join('/etc/netctl', f'hubnet_{str(network_uuid)}')
         if os.path.isfile(network_profile_path):
             try:
                 os.unlink(network_profile_path)
@@ -77,7 +76,7 @@ if __name__ == '__main__':
                     print('You need root permissions to do this!', file=sys.stderr)
                     sys.exit(1)
                 else:
-                    print('Unexpected error %s' % e)
+                    print(f'Unexpected error: {e}')
         else:
             # The profile to be deleted is not there so the state that is to be achieved is already achived.
             # Because of that we print an error but exit successfully.

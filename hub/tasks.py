@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import uuid
 import random
 import logging
@@ -37,6 +35,7 @@ def online(container: uuid.UUID) -> bool:
     else:
         return True
 
+
 @shared_task()
 def create_network(network: Network):
     """
@@ -45,25 +44,21 @@ def create_network(network: Network):
     :param network: the network that should be created
     :return:
     """
-    config = 'Description="LXC bridge for hub network {uuid} of user {email}"\n' \
-             'Interface={interface}\n' \
+    config = f'Description="LXC bridge for hub network {network.uuid.hex} of user {network.user.email}"\n' \
+             f'Interface=hubnet_{network.uuid.hex}\n' \
              'Connection=bridge\n' \
              'BindsToInterfaces=()\n' \
              'IP=static\n' \
-             'Address={address}\n' \
-             'SkipForwardingDelay=yes\n' \
-            .format(uuid=str(network.uuid),
-                    email=network.user.email,
-                    interface='hubnet_%s' % network.uuid.hex,
-                    address=network.network)
+             f'Address={network.network}\n' \
+             'SkipForwardingDelay=yes\n'
 
     args = ['sudo', 'netctl_helper', 'add', network.uuid.hex]
     p = subprocess.Popen(args, stdin=config)
 
-    args = ['sudo', 'netctl', 'enable', 'hubnet_%s' % network.uuid.hex]
+    args = ['sudo', 'netctl', 'enable', f'hubnet_{network.uuid.hex}']
     p = subprocess.Popen(args)
 
-    args = ['sudo', 'netctl', 'start', 'hubnet_%s' % network.uuid.hex]
+    args = ['sudo', 'netctl', 'start', f'hubnet_{network.uuid.hex}']
     p = subprocess.Popen(args)
 
 
@@ -83,10 +78,10 @@ def destroy_network(network: Network):
             found = True
 
     if not found:
-        args = ['sudo', 'netctl', 'stop', 'hubnet_%s' % network.uuid.hex]
+        args = ['sudo', 'netctl', 'stop', f'hubnet_{network.uuid.hex}']
         p = subprocess.Popen(args)
 
-        args = ['sudo', 'netctl', 'disable', 'hubnet_%s' % network.uuid.hex]
+        args = ['sudo', 'netctl', 'disable', f'hubnet_{network.uuid.hex}']
         p = subprocess.Popen(args)
 
         args = ['sudo', 'netctl_helper', 'del', network.uuid.hex]
@@ -108,15 +103,12 @@ def set_ipaddress(container: Container, network: Network, ipaddress: IPAddress):
     """
     if not online(container.uuid):
         config = 'lxc.network.type=veth\n' \
-                 'lxc.network.link=hubnet_{uuid}\n' \
-                 'lxc.network.ipv4={ipaddress}\n' \
-                 'lxc.network.ipv4.gateway={gateway}\n' \
+                 f'lxc.network.link=hubnet_{network.uuid.hex}\n' \
+                 f'lxc.network.ipv4={ipaddress.ip}\n' \
+                 f'lxc.network.ipv4.gateway={network.gateway}\n' \
                  'lxc.network.flags=up\n' \
                  'lxc.network.name=eth0\n' \
-                 'lxc.network.mtu=1500\n' \
-                 .format(uuid=network.uuid.hex,
-                         ipaddress=ipaddress.ip,
-                         gateway=network.gateway)
+                 'lxc.network.mtu=1500\n'
         args = ['sudo', 'lxc_helper', 'update', container.uuid.hex]
         p = subprocess.Popen(args, stdin=config)
         p.communicate()
@@ -124,7 +116,7 @@ def set_ipaddress(container: Container, network: Network, ipaddress: IPAddress):
             ipaddress.container = container
             ipaddress.save()
             # TODO: return success to user
-            logger.info('IP address %s added to container %s' % (ipaddress.ip, str(container.uuid)))
+            logger.info(f'IP address {ipaddress.ip} added to container {container.uuid.hex}')
     else:
         # TODO: return error to user
         logger.error('Container needs to be offline')
@@ -146,10 +138,11 @@ def del_ipadress(container: uuid.UUID, ipaddress: IPAddress):
             ipaddress.container = None
             ipaddress.save()
             # TODO: return success to user
-            logger.info('IP address %s removed from container %s' % (ipaddress.ip, str(container)))
+            logger.info(f'IP address {ipaddress.ip} removed from container {container.uuid.hex}')
     else:
         # TODO: return error to user
         logger.error('Container needs to be offline')
+
 
 @shared_task()
 def add_sshkey(user: settings.AUTH_USER_MODEL, sshkey: str, comment: str = None):
@@ -170,7 +163,7 @@ def add_sshkey(user: settings.AUTH_USER_MODEL, sshkey: str, comment: str = None)
             comment = ssh.comment
     except InvalidKeyException as err:
         # TODO: make better error message, maybe based on the exception class
-        sshkey = '###invalid###%s' % err.__doc__.strip()
+        sshkey = f'###invalid###{err.__doc__.strip()}'
 
     s = SSHKey(public_key=sshkey, comment=comment, user=user)
     s.save()

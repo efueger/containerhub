@@ -24,7 +24,7 @@ class TestProfile:
 
         assert obj.pk == 1, 'Should create a User instance'
         assert obj.profile.pk == 1, 'Should create a Profile instance'
-        assert str(obj.profile) == '%s <%s>' % (TEST_USERNAME, TEST_EMAIL)
+        assert str(obj.profile) == f'{TEST_USERNAME} <{TEST_EMAIL}>'
 
 
 class TestSSHKey:
