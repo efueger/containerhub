@@ -127,3 +127,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
 HOST_IP = ''
+
+VERSION = '0.0.0'
