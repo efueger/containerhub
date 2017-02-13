@@ -1,8 +1,8 @@
 from django.apps import AppConfig
 
 
-class HubConfig(AppConfig):
+class WelcomeConfig(AppConfig):
     """
 
     """
-    name = 'hub'
+    name = 'welcome'

@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+
+[packages]
+django = "*"
+celery = "*"
+docopt = "*"
+sshpubkeys = "*"
+
+[dev-packages]
+mixer = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-django = "*"
+pdbpp = "*"
+bpython = "*"

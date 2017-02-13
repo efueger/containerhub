@@ -1,0 +1,5 @@
+# https://www.quantifiedcode.com/app/project/gh:XenGi:containerhub
+
+# ignore auto generated files
+welcome/migrations/*.py
+hub/migrations/*.py

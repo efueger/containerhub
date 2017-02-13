@@ -1,5 +1,4 @@
-# coding: utf-8
-
+import sshpubkeys
 from django.db import models
 from django.conf import settings
 from django.dispatch import receiver
@@ -11,7 +10,6 @@ from .choices import PROTOCOL_CHOICES
 
 
 # Create your models here.
-
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -28,7 +26,7 @@ class Profile(models.Model):
         instance.profile.save()
 
     def __str__(self):
-        return '%s <%s>' % (self.user.username, self.user.email)
+        return f'{self.user.username} <{self.user.email}>'
 
     class Meta:
         ordering = ('user', )
@@ -40,10 +38,13 @@ class SSHKey(models.Model):
     public_key = models.CharField(max_length=4096)
 
     def __str__(self):
-        return '%s... (%s)' % (self.public_key[:32], self.comment)
+        s = sshpubkeys.SSHKey(keydata=self.public_key)
+        return s.hash_sha512()
+        #return f'{self.public_key[:32]}... ({self.comment})'
 
 
 class Container(models.Model):
+    uuid = models.UUIDField(unique=True)
     name = models.CharField(max_length=255)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     template = models.CharField(max_length=255)
@@ -51,17 +52,20 @@ class Container(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return '%s (%s)' % (self.name, self.template)
+        return f'{self.name} ({self.template})'
 
     def sshconfig(self):
         """
         Generates ssh config to connect to this container
         """
-        config = 'Host {host}\n' \
-                 '    HostName {{ ip }}\n'.format(host=name, ip=settings.HOST_IP)
-        ports = [p for p in self.ports if p.comment == 'SSH']
-        if len(ports) > 0:
-            config += '    Port %d\n' % ports[0]
+        config = f'Host {self.name}\n' \
+                 f'    HostName {settings.HOST_IP}\n'
+        port = self.ports.filter(comment='SSH').first()
+        if port:
+            # TODO: find SSH port
+            config += f'    Port {port.port}\n'
+        else:
+            config += '    #Port\n'
         config += '    User root\n' \
                   '    IdentitiesOnly yes\n' \
                   '    IdentityFile ~/.ssh/id_rsa'
@@ -72,26 +76,28 @@ class Container(models.Model):
 
 
 class Port(models.Model):
-    comment = models.CharField(max_length=255)
-    port = models.PositiveIntegerField(validators=[MinValueValidator(10000), MaxValueValidator(65535)])
+    comment = models.CharField(max_length=255, blank=True, null=True)
+    port = models.PositiveIntegerField(validators=[MinValueValidator(10000, 'Minimum port number is 10000'), MaxValueValidator(65535, 'Maximum port number is 65535')])
     protocol = models.PositiveSmallIntegerField(choices=PROTOCOL_CHOICES, default=1)  # default: TCP
-    container = models.ForeignKey(Container, on_delete=models.CASCADE, related_name='ports')
+    # TODO: on_delete is probably not correct
+    container = models.ForeignKey(Container, on_delete=models.CASCADE, related_name='ports', null=True)
 
     def __str__(self):
-        return '%d (%s)' % (self.port, self.get_protocol_display())
+        return f'{self.port} ({self.get_protocol_display()})'
 
     class Meta:
         ordering = ('container', 'port')
 
 
 class Network(models.Model):
+    uuid = models.UUIDField(unique=True)
     network = models.GenericIPAddressField()
     subnet = models.PositiveSmallIntegerField()
     gateway = models.GenericIPAddressField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
-        return '%s/%s -> %s' % (self.network, self.subnet, self.gateway)
+        return f'{self.network}/{self.subnet} -> {self.gateway}'
 
 
 class IPAddress(models.Model):
@@ -101,11 +107,15 @@ class IPAddress(models.Model):
 
     def __str__(self):
         if self.container:
-            return '%s/%s (%s)' % (self.ip, self.network.subnet, self.container.name)
+            return f'{self.ip}/{self.network.subnet} ({self.container.name})'
         else:
-            return '%s/%s' % (self.ip, self.network.subnet)
+            return f'{self.ip}/{self.network.subnet}'
+
 
 class Domain(models.Model):
     name = models.CharField(max_length=255)
     ip = models.ForeignKey(IPAddress, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.name} -> {self.ip.ip}'

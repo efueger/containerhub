@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
 Django settings for containerhub project.
 
@@ -14,15 +12,17 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+from .local_settings import SECRET_KEY as local_secret
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'wt%1(%lx#q@siy%cwxy)i#fgnmpfa$5l*eqf*ingie21h&#ku5'
+SECRET_KEY = local_secret
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'welcome.apps.WelcomeConfig',
     'hub.apps.HubConfig',
 ]
 
@@ -124,3 +126,6 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
+HOST_IP = ''
+
+VERSION = '0.0.0'
