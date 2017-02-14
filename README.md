@@ -1,4 +1,6 @@
 [![Code Issues](https://www.quantifiedcode.com/api/v1/project/886b33fdf8ed460f98ba358c71beb7a4/badge.svg)](https://www.quantifiedcode.com/app/project/886b33fdf8ed460f98ba358c71beb7a4)
+[![codecov](https://codecov.io/gh/XenGi/containerhub/branch/master/graph/badge.svg)](https://codecov.io/gh/XenGi/containerhub)
+
 
 ![linux containers][logo]
 
