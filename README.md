@@ -1,6 +1,10 @@
 [![Code Issues](https://www.quantifiedcode.com/api/v1/project/886b33fdf8ed460f98ba358c71beb7a4/badge.svg)](https://www.quantifiedcode.com/app/project/886b33fdf8ed460f98ba358c71beb7a4)
-[![codecov](https://codecov.io/gh/XenGi/containerhub/branch/master/graph/badge.svg)](https://codecov.io/gh/XenGi/containerhub)
-[![Github All Releases](https://img.shields.io/github/downloads/atom/atom/total.svg)]()
+[![Codecov](https://img.shields.io/codecov/c/github/XenGi/containerhub.svg?style=flat-square)]()
+[![Code Climate](https://img.shields.io/codeclimate/github/XenGi/containerhub.svg?style=flat-square)]()
+[![Github All Releases](https://img.shields.io/github/downloads/XenGi/containerhub/total.svg?style=flat-square)]()
+[![license](https://img.shields.io/github/license/XenGi/containerhub.svg?style=flat-square)]()
+[![PyPI](https://img.shields.io/pypi/v/containerhub.svg?style=flat-square)]()
+[![AUR](https://img.shields.io/aur/version/containerhub.svg?style=flat-square)]()
 
 ![linux containers][logo]
 
