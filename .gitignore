@@ -1,6 +1,8 @@
 
 # Created by https://www.gitignore.io/api/windows,linux,osx,python,django,pycharm,vim
 
+Pipfile.lock
+
 ### Windows ###
 # Windows image file caches
 Thumbs.db
